@@ -4,375 +4,514 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Security Training Simulation</title>
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icon.png">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>Secure Testing Environment</title>
+    <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAMAAABrrFhUAAAAA1BMVEUAAP+KeNJXAAAAR0lEQVR4nO3BAQ0AAADCoPdPbQ43oAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAICvA9ygAAFXaD83AAAAAElFTkSuQmCC">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
-        
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            width: 100%;
-            overflow: hidden;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
-            background-color: #000;
-            color: #fff;
-            position: fixed;
-            top: 0;
-            left: 0;
             -webkit-touch-callout: none;
             -webkit-user-select: none;
             user-select: none;
         }
         
-        .ransomware-screen {
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: fixed;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f0f0;
+            touch-action: none; /* Prevents default touch behaviors */
+        }
+        
+        #exam-container {
             width: 100%;
             height: 100%;
             display: flex;
             flex-direction: column;
+        }
+        
+        #exam-header {
+            background-color: #2a64b5;
+            color: white;
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 60px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+        
+        #exam-title {
+            font-size: 18px;
+            font-weight: 500;
+        }
+        
+        #exam-timer {
+            font-size: 16px;
+            background-color: rgba(255,255,255,0.2);
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+        
+        #exam-content {
+            flex: 1;
+            padding: 20px;
+            background-color: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #lockdown-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(204, 0, 0, 0.97);
+            display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, #990000, #cc0000);
+            z-index: 500;
             text-align: center;
             padding: 20px;
-            box-sizing: border-box;
-            position: relative;
-            z-index: 999;
+            color: white;
         }
         
-        .ransomware-content {
-            width: 100%;
-            max-width: 600px;
-        }
-        
-        .skull-icon {
-            font-size: 80px;
+        .warning-icon {
+            font-size: 70px;
             margin-bottom: 20px;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
         }
         
         h1 {
-            font-size: clamp(24px, 5vw, 32px);
-            margin-bottom: 20px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            font-size: 26px;
+            margin-bottom: 15px;
         }
         
         p {
-            font-size: clamp(16px, 3vw, 18px);
-            margin-bottom: 15px;
+            font-size: 18px;
+            margin-bottom: 20px;
+            max-width: 500px;
             line-height: 1.4;
         }
         
-        .timer-container {
-            background-color: rgba(0,0,0,0.3);
-            border-radius: 8px;
-            padding: 10px;
-            margin: 20px 0;
-            display: inline-block;
-            width: 80%;
-            max-width: 300px;
+        #passcode-container {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 320px;
         }
         
-        .timer {
-            font-family: monospace;
-            font-size: 28px;
-            font-weight: bold;
-            color: #ff0;
-        }
-        
-        input {
+        #passcode-field {
+            width: 100%;
             padding: 15px;
-            width: 80%;
-            max-width: 300px;
             font-size: 18px;
-            margin: 20px 0 10px;
             text-align: center;
-            border: 2px solid #fff;
+            border: 2px solid rgba(255,255,255,0.3);
             background-color: rgba(0,0,0,0.2);
             color: white;
             border-radius: 8px;
+            margin-bottom: 15px;
         }
         
-        input:focus {
+        #passcode-field:focus {
             outline: none;
-            border-color: #ff0;
+            border-color: white;
         }
         
-        button {
-            padding: 15px 30px;
+        #unlock-button {
+            width: 100%;
+            padding: 15px;
             font-size: 18px;
-            background-color: #333;
+            background-color: #1a1a1a;
             color: white;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.2s;
-            margin-bottom: 20px;
-            font-weight: bold;
         }
         
-        button:active {
-            transform: scale(0.98);
-            background-color: #222;
+        #unlock-button:active {
+            background-color: #000;
         }
         
-        .simulation-notice {
+        .footer-note {
             position: absolute;
-            bottom: 10px;
+            bottom: 15px;
+            left: 0;
+            width: 100%;
+            text-align: center;
             font-size: 12px;
             opacity: 0.7;
-            width: 100%;
-            padding: 10px;
-            background-color: rgba(0,0,0,0.3);
         }
         
-        .lock-instruction {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: rgba(255,255,255,0.1);
-            border-radius: 8px;
-            font-size: 14px;
-        }
-        
-        .bitcoin-address {
+        /* Countdown styling */
+        #countdown-display {
+            font-size: 22px;
+            font-weight: bold;
+            margin: 15px 0;
             font-family: monospace;
+        }
+        
+        /* Alert message styling */
+        .alert-message {
             background-color: rgba(0,0,0,0.3);
             padding: 10px;
             border-radius: 6px;
-            font-size: 14px;
             margin: 15px 0;
-            word-break: break-all;
+            font-size: 16px;
+            color: #ff9;
         }
         
-        @media (orientation: landscape) {
-            .ransomware-content {
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                justify-content: center;
-                gap: 30px;
-            }
-            
-            .left-content {
-                flex: 1;
-                text-align: left;
-            }
-            
-            .right-content {
-                flex: 1;
-            }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-6px); }
+            20%, 40%, 60%, 80% { transform: translateX(6px); }
+        }
+        
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
         }
     </style>
 </head>
 <body>
-    <div class="ransomware-screen">
-        <div class="ransomware-content">
-            <div class="left-content">
-                <div class="skull-icon">💀</div>
-                <h1>YOUR DEVICE HAS BEEN LOCKED</h1>
-                <p>All your personal files have been encrypted with a strong military-grade algorithm.</p>
-                <p>To recover your files, you must enter the correct decryption key.</p>
-                
-                <div class="timer-container">
-                    <p>Time remaining:</p>
-                    <div class="timer" id="countdown">23:59:59</div>
-                </div>
-                
-                <div class="bitcoin-address">
-                    Bitcoin: 1A2B3C4D5E6F7G8H9I0J1K2L3M4N5O6P7Q8R9S0T
-                </div>
-            </div>
-            
-            <div class="right-content">
-                <div class="lock-instruction">
-                    <p>Enter the unlock code to restore your device</p>
-                    <input type="number" id="decryptCode" placeholder="Enter unlock code" pattern="[0-9]*" inputmode="numeric">
-                    <button id="unlockButton">Decrypt Files</button>
-                </div>
-                
-                <p style="color: #ff6666; font-size: 14px;">Warning: Do not restart your device or your files will be permanently deleted.</p>
-            </div>
+    <div id="exam-container">
+        <div id="exam-header">
+            <div id="exam-title">Secure Assessment Environment</div>
+            <div id="exam-timer">Time remaining: <span id="header-timer">00:00:00</span></div>
         </div>
         
-        <div class="simulation-notice">
-            THIS IS ONLY A SIMULATION FOR EDUCATIONAL PURPOSES.<br>
-            No files are actually locked. The unlock code is "12345". Restart your iPad to exit.
+        <div id="exam-content">
+            <!-- Normal content would go here in a real exam system -->
+            <div style="padding: 20px; text-align: center; color: #333;">
+                <h2>Secure Test Environment</h2>
+                <p>Your test has been locked due to security policy violations.</p>
+            </div>
+            
+            <!-- This is the lockdown overlay that simulates ransomware -->
+            <div id="lockdown-overlay">
+                <div class="warning-icon">🔒</div>
+                <h1>DEVICE LOCKED</h1>
+                <p>This device has been locked due to a security violation.</p>
+                
+                <div class="alert-message">
+                    All exam progress has been suspended and will be reported to your administrator.
+                </div>
+                
+                <p>Your device will remain locked for:</p>
+                <div id="countdown-display">23:59:59</div>
+                
+                <div id="passcode-container">
+                    <input type="number" id="passcode-field" placeholder="Enter admin passcode" pattern="[0-9]*" inputmode="numeric">
+                    <button id="unlock-button">Unlock Device</button>
+                </div>
+                
+                <div class="footer-note">
+                    THIS IS A SIMULATION FOR EDUCATIONAL PURPOSES ONLY.<br>
+                    To exit, enter code "12345" or restart your device.
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // Block history navigation
-        history.pushState(null, null, location.href);
-        window.onpopstate = function() {
-            history.go(1);
-        };
-        
-        // Take over the screen when possible
-        document.addEventListener('click', function() {
-            if (document.documentElement.requestFullscreen) {
-                document.documentElement.requestFullscreen().catch(e => {
-                    console.log("Fullscreen request failed");
-                });
-            }
+        // Prevent browser navigation
+        history.pushState(null, null, document.URL);
+        window.addEventListener('popstate', function () {
+            history.pushState(null, null, document.URL);
+            showNavigationAttemptWarning();
         });
         
-        // Prevent normal touch navigation
-        document.addEventListener('touchmove', function(e) {
-            if (e.touches.length > 1) {
+        // Block keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Block common navigation/escape keys
+            const blockedKeys = [
+                27, // Esc
+                112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, // F1-F12
+                91, 92, // Windows/Command keys
+                18, // Alt
+                17, // Control
+                9 // Tab
+            ];
+            
+            // Block when combined with Ctrl/Cmd
+            if ((e.ctrlKey || e.metaKey) && 
+                ['w', 'a', 't', 'n', 'r', '+', '-', '0', 'f'].includes(e.key.toLowerCase())) {
                 e.preventDefault();
+                showNavigationAttemptWarning();
+                return false;
             }
-        }, { passive: false });
-        
-        // Prevent pinch zooming
-        document.addEventListener('gesturestart', function(e) {
-            e.preventDefault();
+            
+            if (blockedKeys.includes(e.keyCode)) {
+                e.preventDefault();
+                return false;
+            }
         });
         
         // Prevent context menu
         document.addEventListener('contextmenu', function(e) {
             e.preventDefault();
+            showNavigationAttemptWarning();
+            return false;
         });
+        
+        // Prevent copy/paste
+        document.addEventListener('copy', function(e) {
+            e.preventDefault();
+            return false;
+        });
+        
+        document.addEventListener('paste', function(e) {
+            // Only allow paste in the passcode field
+            if (e.target.id !== 'passcode-field') {
+                e.preventDefault();
+                return false;
+            }
+        });
+        
+        // Request fullscreen on user interaction
+        document.addEventListener('click', function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen mode: ${err.message}`);
+                });
+            }
+        });
+        
+        // Handle fullscreen change
+        document.addEventListener('fullscreenchange', function() {
+            if (!document.fullscreenElement) {
+                showNavigationAttemptWarning();
+            }
+        });
+        
+        // Monitor visibility changes
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState !== 'visible') {
+                showNavigationAttemptWarning();
+            }
+        });
+        
+        // Handle blur events
+        window.addEventListener('blur', function() {
+            showNavigationAttemptWarning();
+        });
+        
+        // Warn when user tries to navigate away
+        function showNavigationAttemptWarning() {
+            const passcodeField = document.getElementById('passcode-field');
+            passcodeField.classList.add('shake');
+            
+            // Remove the shake class after animation completes
+            setTimeout(() => {
+                passcodeField.classList.remove('shake');
+            }, 500);
+            
+            // Create alert message if it doesn't exist
+            if (!document.querySelector('.navigation-warning')) {
+                const warningMsg = document.createElement('div');
+                warningMsg.className = 'alert-message navigation-warning';
+                warningMsg.textContent = 'Navigation attempt detected and recorded. Device will remain locked.';
+                
+                const container = document.getElementById('passcode-container');
+                container.parentNode.insertBefore(warningMsg, container);
+                
+                // Remove after 5 seconds
+                setTimeout(() => {
+                    warningMsg.remove();
+                }, 5000);
+            }
+        }
         
         // Set up countdown timer
-        let hours = 23;
-        let minutes = 59;
-        let seconds = 59;
+        let totalSeconds = 86399; // 23:59:59
         
         function updateTimer() {
-            document.getElementById('countdown').innerText = 
-                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
             
-            if (seconds > 0) {
-                seconds--;
-            } else {
-                if (minutes > 0) {
-                    minutes--;
-                    seconds = 59;
-                } else {
-                    if (hours > 0) {
-                        hours--;
-                        minutes = 59;
-                        seconds = 59;
-                    }
-                }
+            const timeString = [hours, minutes, seconds]
+                .map(v => v < 10 ? "0" + v : v)
+                .join(":");
+                
+            document.getElementById('countdown-display').textContent = timeString;
+            document.getElementById('header-timer').textContent = timeString;
+            
+            if (totalSeconds > 0) {
+                totalSeconds--;
             }
         }
         
+        // Update timer every second
         setInterval(updateTimer, 1000);
+        updateTimer(); // Initial call
         
-        // Check unlock code
-        document.getElementById('unlockButton').addEventListener('click', function() {
-            checkCode();
+        // Handle unlock button click
+        document.getElementById('unlock-button').addEventListener('click', function() {
+            checkPasscode();
         });
         
-        document.getElementById('decryptCode').addEventListener('keyup', function(e) {
+        // Handle passcode field Enter key
+        document.getElementById('passcode-field').addEventListener('keyup', function(e) {
             if (e.key === 'Enter') {
-                checkCode();
+                checkPasscode();
             }
         });
         
-        function checkCode() {
-            const code = document.getElementById('decryptCode').value;
-            if (code === "12345") {
+        // Check entered passcode
+        function checkPasscode() {
+            const passcode = document.getElementById('passcode-field').value;
+            
+            if (passcode === '12345') {
                 unlockSimulation();
             } else {
-                // Shake the input to indicate wrong code
-                const input = document.getElementById('decryptCode');
-                input.style.animation = 'none';
-                setTimeout(() => {
-                    input.style.animation = 'shake 0.5s';
-                }, 10);
+                // Shake the input to indicate wrong passcode
+                const input = document.getElementById('passcode-field');
+                input.classList.add('shake');
                 
-                // Add shake animation if not present
-                if (!document.querySelector('style').textContent.includes('@keyframes shake')) {
-                    const style = document.createElement('style');
-                    style.textContent = `
-                        @keyframes shake {
-                            0%, 100% { transform: translateX(0); }
-                            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-                            20%, 40%, 60%, 80% { transform: translateX(5px); }
-                        }
-                    `;
-                    document.head.appendChild(style);
-                }
+                // Clear the input
+                input.value = '';
+                
+                // Reset the animation after it completes
+                setTimeout(() => {
+                    input.classList.remove('shake');
+                }, 500);
             }
         }
-        
-        function unlockSimulation() {
-            // Display unlock message
-            document.body.innerHTML = `
-                <div style="padding: 20px; text-align: center; height: 100%; overflow: auto; background: #fff; color: #333;">
-                    <h1 style="color: #008800; margin: 30px 0;">SIMULATION COMPLETE</h1>
-                    <div style="max-width: 600px; margin: 0 auto;">
-                        <p style="font-size: 18px; margin: 20px 0;">This was an educational simulation of ransomware. In a real attack, your files would have been encrypted and potentially unrecoverable without a decryption key.</p>
-                        
-                        <h2 style="margin: 30px 0 15px;">How real ransomware works:</h2>
-                        <ul style="text-align: left; display: inline-block; margin: 0 auto;">
-                            <li style="margin-bottom: 10px;">Encrypts personal files using advanced encryption</li>
-                            <li style="margin-bottom: 10px;">Demands payment (often in cryptocurrency)</li>
-                            <li style="margin-bottom: 10px;">Uses fear tactics to pressure victims</li>
-                            <li style="margin-bottom: 10px;">May have countdown timers to create urgency</li>
-                        </ul>
-                        
-                        <h2 style="margin: 30px 0 15px;">Protect yourself by:</h2>
-                        <ul style="text-align: left; display: inline-block; margin: 0 auto;">
-                            <li style="margin-bottom: 10px;">Keeping your device updated</li>
-                            <li style="margin-bottom: 10px;">Using strong passwords and 2FA</li>
-                            <li style="margin-bottom: 10px;">Not clicking suspicious links or attachments</li>
-                            <li style="margin-bottom: 10px;">Backing up important files regularly</li>
-                            <li style="margin-bottom: 10px;">Using security software</li>
-                        </ul>
-                        
-                        <p style="margin: 30px 0;">Thanks for participating in this educational simulation!</p>
-                    </div>
-                </div>
-            `;
+
+function unlockSimulation() {
+    document.body.innerHTML = `
+        <div style="padding: 30px; text-align: center; background-color: #fff; color: #333; height: 100%; overflow: auto;">
+            <h1 style="color: #2a64b5; margin-bottom: 30px;">SIMULATION COMPLETE</h1>
             
-            // Reset body styles
-            document.body.style.overflow = "auto";
-            document.body.style.position = "static";
-            
-            // Allow history navigation again
-            window.onpopstate = null;
-        }
-        
-        // Lock orientation if possible
-        if (screen.orientation && screen.orientation.lock) {
-            screen.orientation.lock('portrait').catch(error => {
-                console.log('Orientation lock failed:', error);
-            });
-        }
-        
-        // Handle iOS specific behaviors
-        if (navigator.standalone) {
-            // Already running as a PWA
-            document.body.classList.add('pwa-mode');
-        } else {
-            // Show a message to add to home screen
-            const addToHomeNotice = document.createElement('div');
-            addToHomeNotice.innerHTML = `
-                <div style="position: fixed; top: 0; left: 0; right: 0; background: rgba(0,0,0,0.8); color: white; padding: 10px; text-align: center; font-size: 14px; z-index: 1000;">
-                    For full experience, add to home screen
-                    <button onclick="this.parentNode.remove()" style="margin-left: 10px; padding: 5px; background: #666; border: none; color: white; border-radius: 4px;">OK</button>
+            <div style="max-width: 700px; margin: 0 auto; text-align: left;">
+                <h2 style="margin-bottom: 15px; color: #333;">About This Simulation</h2>
+                <p style="line-height: 1.6; margin-bottom: 25px;">
+                    This was an educational simulation demonstrating how locked-down environments like exam platforms 
+                    work and how they can appear similar to ransomware interfaces. Understanding these interfaces helps
+                    users recognize legitimate applications versus malicious ones.
+                </p>
+                
+                <h2 style="margin-bottom: 15px; color: #333;">Key Features Demonstrated:</h2>
+                <ul style="line-height: 1.6; margin-bottom: 25px; padding-left: 25px;">
+                    <li>Full-screen lockdown similar to exam.net</li>
+                    <li>Prevention of browser navigation</li>
+                    <li>Keyboard shortcut blocking</li>
+                    <li>Timer countdowns to create urgency</li>
+                    <li>Passcode protection systems</li>
+                    <li>Warning messages for escape attempts</li>
+                </ul>
+                
+                <h2 style="margin-bottom: 15px; color: #333;">Legitimate vs. Malicious Lockdowns:</h2>
+                <table style="width:100%; border-collapse: collapse; margin-bottom: 25px;">
+                    <tr style="background-color: #f2f2f2;">
+                        <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Legitimate (like exam.net)</th>
+                        <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Malicious (ransomware)</th>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Educational or testing purpose</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Criminal extortion purpose</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Installed by administrators</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Installed through deception</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Can be exited with proper credentials</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Demands payment to unlock</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd;">No data encryption</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Encrypts personal files</td>
+                    </tr>
+                </table>
+                
+                <h2 style="margin-bottom: 15px; color: #333;">Safety Tips:</h2>
+                <ol style="line-height: 1.6; margin-bottom: 30px; padding-left: 25px;">
+                    <li>Only use exam lockdown software from trusted sources</li>
+                    <li>Be aware of what legitimate lockdown screens look like</li>
+                    <li>If unsure about a lockdown screen, restart your device</li>
+                    <li>Keep your device updated with security patches</li>
+                    <li>Use security software to detect malicious lockdowns</li>
+                </ol>
+                
+                <div style="text-align: center; margin-top: 30px; padding: 15px; background-color: #f0f7ff; border-radius: 8px;">
+                    <p style="margin-bottom: 10px;">Thank you for participating in this educational simulation!</p>
+                    <button onclick="resetSimulation()" style="padding: 10px 20px; background-color: #2a64b5; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        Restart Simulation
+                    </button>
                 </div>
-            `;
-            if (/(iPhone|iPad|iPod)/i.test(navigator.userAgent) && !navigator.standalone) {
-                document.body.appendChild(addToHomeNotice);
-            }
-        }
-    </script>
+            </div>
+        </div>
+    `;
+    
+    // Reset body styles and allow normal navigation
+    document.body.style.overflow = "auto";
+    document.body.style.position = "static";
+    
+    // Reset event listeners that prevented navigation
+    window.onpopstate = null;
+    
+    // Exit fullscreen if currently in fullscreen mode
+    if (document.fullscreenElement) {
+        document.exitFullscreen().catch(err => {
+            console.log(`Error attempting to exit full-screen mode: ${err.message}`);
+        });
+    }
+}
+
+// Function to restart the simulation
+function resetSimulation() {
+    window.location.reload();
+}
+
+// Initial focus on the passcode field
+document.getElementById('passcode-field').focus();
+
+// Additional check to prevent iframe embedding
+if (window.self !== window.top) {
+    // If the page is in an iframe, redirect to break out
+    window.top.location.href = window.self.location.href;
+}
+
+// iOS specific behaviors
+if (navigator.standalone) {
+    // Already running as a PWA on iOS
+    document.body.classList.add('ios-standalone-mode');
+} else if (/(iPhone|iPad|iPod)/i.test(navigator.userAgent)) {
+    // On iOS but not in standalone mode, consider showing add to home screen prompt
+    const homeScreenPrompt = document.createElement('div');
+    homeScreenPrompt.style.cssText = `
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0,0,0,0.85);
+        color: white;
+        padding: 15px;
+        text-align: center;
+        font-size: 14px;
+        z-index: 10000;
+    `;
+    homeScreenPrompt.innerHTML = `
+        For the best experience, add this app to your home screen.
+        <button id="dismiss-prompt" style="margin-left: 10px; padding: 5px 10px; background: #444; border: none; color: white; border-radius: 4px;">
+            Dismiss
+        </button>
+    `;
+    
+    // Delay adding the prompt to give time for page load
+    setTimeout(() => {
+        document.body.appendChild(homeScreenPrompt);
+        document.getElementById('dismiss-prompt').addEventListener('click', function() {
+            homeScreenPrompt.remove();
+        });
+    }, 3000);
+}
+</script>
 </body>
 </html>
