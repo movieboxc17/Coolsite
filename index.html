@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <title>Secure Testing Environment</title>
+    <title>System Alert</title>
     <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAMAAABrrFhUAAAAA1BMVEUAAP+KeNJXAAAAR0lEQVR4nO3BAQ0AAADCoPdPbQ43oAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAICvA9ygAAFXaD83AAAAAElFTkSuQmCC">
     <style>
         * {
@@ -23,147 +23,119 @@
             overflow: hidden;
             position: fixed;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f0f0f0;
+            background-color: #000;
             touch-action: none; /* Prevents default touch behaviors */
-        }
-        
-        #exam-container {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        #exam-header {
-            background-color: #2a64b5;
             color: white;
-            padding: 12px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 60px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            z-index: 100;
         }
         
-        #exam-title {
-            font-size: 18px;
-            font-weight: 500;
-        }
-        
-        #exam-timer {
-            font-size: 16px;
-            background-color: rgba(255,255,255,0.2);
-            padding: 5px 10px;
-            border-radius: 4px;
-        }
-        
-        #exam-content {
-            flex: 1;
-            padding: 20px;
-            background-color: #fff;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        #lockdown-overlay {
-            position: absolute;
+        #lockscreen {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(204, 0, 0, 0.97);
+            background: linear-gradient(135deg, #cc0000, #7a0000);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 500;
+            z-index: 9999;
             text-align: center;
             padding: 20px;
-            color: white;
         }
         
-        .warning-icon {
-            font-size: 70px;
-            margin-bottom: 20px;
+        .lock-icon {
+            font-size: 80px;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
         }
         
         h1 {
-            font-size: 26px;
-            margin-bottom: 15px;
+            font-size: 28px;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
         
         p {
             font-size: 18px;
-            margin-bottom: 20px;
-            max-width: 500px;
-            line-height: 1.4;
-        }
-        
-        #passcode-container {
-            margin-top: 20px;
-            width: 100%;
-            max-width: 320px;
-        }
-        
-        #passcode-field {
-            width: 100%;
-            padding: 15px;
-            font-size: 18px;
-            text-align: center;
-            border: 2px solid rgba(255,255,255,0.3);
-            background-color: rgba(0,0,0,0.2);
-            color: white;
-            border-radius: 8px;
             margin-bottom: 15px;
+            max-width: 600px;
+            line-height: 1.5;
         }
         
-        #passcode-field:focus {
-            outline: none;
-            border-color: white;
-        }
-        
-        #unlock-button {
-            width: 100%;
+        .system-message {
+            background-color: rgba(0,0,0,0.3);
             padding: 15px;
-            font-size: 18px;
-            background-color: #1a1a1a;
-            color: white;
-            border: none;
             border-radius: 8px;
-            cursor: pointer;
+            margin: 20px 0;
+            font-size: 16px;
+            max-width: 600px;
         }
         
-        #unlock-button:active {
-            background-color: #000;
+        .timer-container {
+            background-color: rgba(0,0,0,0.4);
+            border-radius: 8px;
+            padding: 10px 20px;
+            margin: 20px 0;
+            display: inline-block;
         }
         
-        .footer-note {
-            position: absolute;
-            bottom: 15px;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            font-size: 12px;
-            opacity: 0.7;
-        }
-        
-        /* Countdown styling */
-        #countdown-display {
-            font-size: 22px;
+        .timer {
+            font-family: monospace;
+            font-size: 28px;
             font-weight: bold;
-            margin: 15px 0;
+            color: #fff;
+        }
+        
+        #device-id {
+            font-family: monospace;
+            background-color: rgba(0,0,0,0.2);
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-size: 16px;
+            letter-spacing: 1px;
+            margin: 10px 0;
+        }
+        
+        .emergency-section {
+            margin-top: 30px;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .emergency-text {
+            font-size: 14px;
+            opacity: 0.7;
+            margin-bottom: 10px;
+        }
+        
+        #emergency-input {
+            width: 250px;
+            padding: 10px;
+            background-color: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.7);
+            border-radius: 4px;
+            text-align: center;
+            margin-top: 5px;
             font-family: monospace;
         }
         
-        /* Alert message styling */
-        .alert-message {
-            background-color: rgba(0,0,0,0.3);
-            padding: 10px;
-            border-radius: 6px;
-            margin: 15px 0;
-            font-size: 16px;
-            color: #ff9;
+        #emergency-input:focus {
+            outline: none;
+            border-color: rgba(255,255,255,0.4);
+        }
+        
+        .status-text {
+            margin-top: 10px;
+            font-size: 14px;
+            min-height: 20px;
         }
         
         @keyframes shake {
@@ -175,155 +147,164 @@
         .shake {
             animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
         }
+        
+        /* Hide all scrollbars */
+        ::-webkit-scrollbar {
+            display: none;
+        }
     </style>
 </head>
 <body>
-    <div id="exam-container">
-        <div id="exam-header">
-            <div id="exam-title">Secure Assessment Environment</div>
-            <div id="exam-timer">Time remaining: <span id="header-timer">00:00:00</span></div>
+    <div id="lockscreen">
+        <div class="lock-icon">🔒</div>
+        <h1>SYSTEM LOCKED</h1>
+        
+        <div class="system-message">
+            <p>This device has been locked for security violations.</p>
         </div>
         
-        <div id="exam-content">
-            <!-- Normal content would go here in a real exam system -->
-            <div style="padding: 20px; text-align: center; color: #333;">
-                <h2>Secure Test Environment</h2>
-                <p>Your test has been locked due to security policy violations.</p>
-            </div>
-            
-            <!-- This is the lockdown overlay that simulates ransomware -->
-            <div id="lockdown-overlay">
-                <div class="warning-icon">🔒</div>
-                <h1>DEVICE LOCKED</h1>
-                <p>This device has been locked due to a security violation.</p>
-                
-                <div class="alert-message">
-                    All exam progress has been suspended and will be reported to your administrator.
-                </div>
-                
-                <p>Your device will remain locked for:</p>
-                <div id="countdown-display">23:59:59</div>
-                
-                <div id="passcode-container">
-                    <input type="number" id="passcode-field" placeholder="Enter admin passcode" pattern="[0-9]*" inputmode="numeric">
-                    <button id="unlock-button">Unlock Device</button>
-                </div>
-                
-                <div class="footer-note">
-                    THIS IS A SIMULATION FOR EDUCATIONAL PURPOSES ONLY.<br>
-                    To exit, enter code "12345" or restart your device.
-                </div>
-            </div>
+        <p>Your identity and location have been recorded.</p>
+        <div id="device-id">ID: 8A7C-4F19-E23D-9B5X</div>
+        
+        <div class="timer-container">
+            <p>Auto-wipe in:</p>
+            <div class="timer" id="countdown">23:59:59</div>
+        </div>
+        
+        <div class="system-message">
+            <p>All functions are disabled and your data is being monitored.</p>
+            <p>Do not attempt to exit this screen or your data will be compromised.</p>
+        </div>
+        
+        <div class="emergency-section">
+            <div class="emergency-text">System administrator verification required:</div>
+            <input type="password" id="emergency-input" placeholder="Enter verification key" autocomplete="off">
+            <div class="status-text" id="status-message"></div>
         </div>
     </div>
 
     <script>
-        // Prevent browser navigation
+        // Force fullscreen immediately and persistently
+        function goFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen mode: ${err.message}`);
+                    setTimeout(goFullScreen, 1000); // Try again if it fails
+                });
+            }
+        }
+        
+        // Try to go fullscreen on any user interaction
+        document.addEventListener('click', goFullScreen);
+        document.addEventListener('touchstart', goFullScreen);
+        document.addEventListener('keydown', goFullScreen);
+        
+        // Attempt fullscreen immediately
+        goFullScreen();
+        
+        // Keep trying to go fullscreen periodically
+        setInterval(goFullScreen, 3000);
+        
+        // Block browser navigation with history API
         history.pushState(null, null, document.URL);
         window.addEventListener('popstate', function () {
             history.pushState(null, null, document.URL);
-            showNavigationAttemptWarning();
+            showNavigationWarning();
         });
         
-        // Block keyboard shortcuts
+        // Block common keyboard shortcuts
         document.addEventListener('keydown', function(e) {
-            // Block common navigation/escape keys
+            // Block standard navigation keys
             const blockedKeys = [
                 27, // Esc
                 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, // F1-F12
                 91, 92, // Windows/Command keys
                 18, // Alt
                 17, // Control
-                9 // Tab
+                9, // Tab
+                82, // R key (for refresh)
+                87  // W key (for close)
             ];
             
-            // Block when combined with Ctrl/Cmd
+            // Block Ctrl+key and Command+key combinations
             if ((e.ctrlKey || e.metaKey) && 
-                ['w', 'a', 't', 'n', 'r', '+', '-', '0', 'f'].includes(e.key.toLowerCase())) {
+                ['w', 'a', 't', 'n', 'r', '+', '-', '0', 'f', 'p', 's'].includes(e.key.toLowerCase())) {
                 e.preventDefault();
-                showNavigationAttemptWarning();
+                showNavigationWarning();
                 return false;
             }
             
-            if (blockedKeys.includes(e.keyCode)) {
+            // Block Alt+Tab and other Alt combinations
+            if (e.altKey) {
                 e.preventDefault();
+                showNavigationWarning();
                 return false;
             }
-        });
+            
+            // Block function keys and other navigation keys
+            if (blockedKeys.includes(e.keyCode)) {
+                e.preventDefault();
+                showNavigationWarning();
+                return false;
+            }
+            
+            // Allow input in the emergency field
+            if (e.target.id === 'emergency-input') {
+                // If Enter is pressed, check the code
+                if (e.key === 'Enter') {
+                    checkEmergencyCode();
+                }
+                return;
+            }
+        }, true);
         
         // Prevent context menu
         document.addEventListener('contextmenu', function(e) {
             e.preventDefault();
-            showNavigationAttemptWarning();
+            showNavigationWarning();
             return false;
-        });
-        
-        // Prevent copy/paste
-        document.addEventListener('copy', function(e) {
-            e.preventDefault();
-            return false;
-        });
-        
-        document.addEventListener('paste', function(e) {
-            // Only allow paste in the passcode field
-            if (e.target.id !== 'passcode-field') {
-                e.preventDefault();
-                return false;
-            }
-        });
-        
-        // Request fullscreen on user interaction
-        document.addEventListener('click', function() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => {
-                    console.log(`Error attempting to enable full-screen mode: ${err.message}`);
-                });
-            }
         });
         
         // Handle fullscreen change
         document.addEventListener('fullscreenchange', function() {
             if (!document.fullscreenElement) {
-                showNavigationAttemptWarning();
+                showNavigationWarning();
+                // Try to go back to fullscreen
+                setTimeout(goFullScreen, 500);
             }
         });
         
         // Monitor visibility changes
         document.addEventListener('visibilitychange', function() {
             if (document.visibilityState !== 'visible') {
-                showNavigationAttemptWarning();
+                showNavigationWarning();
             }
         });
         
         // Handle blur events
         window.addEventListener('blur', function() {
-            showNavigationAttemptWarning();
+            showNavigationWarning();
         });
         
-        // Warn when user tries to navigate away
-        function showNavigationAttemptWarning() {
-            const passcodeField = document.getElementById('passcode-field');
-            passcodeField.classList.add('shake');
+        // Display warning for navigation attempts
+        function showNavigationWarning() {
+            const statusMessage = document.getElementById('status-message');
+            statusMessage.textContent = "WARNING: Exit attempt detected and logged.";
+            statusMessage.style.color = "#ff6666";
             
-            // Remove the shake class after animation completes
+            // Make the screen shake
+            const lockscreen = document.getElementById('lockscreen');
+            lockscreen.classList.add('shake');
+            
+            // Reset the animation after it completes
             setTimeout(() => {
-                passcodeField.classList.remove('shake');
+                lockscreen.classList.remove('shake');
             }, 500);
             
-            // Create alert message if it doesn't exist
-            if (!document.querySelector('.navigation-warning')) {
-                const warningMsg = document.createElement('div');
-                warningMsg.className = 'alert-message navigation-warning';
-                warningMsg.textContent = 'Navigation attempt detected and recorded. Device will remain locked.';
-                
-                const container = document.getElementById('passcode-container');
-                container.parentNode.insertBefore(warningMsg, container);
-                
-                // Remove after 5 seconds
-                setTimeout(() => {
-                    warningMsg.remove();
-                }, 5000);
-            }
+            // Clear the message after a delay
+            setTimeout(() => {
+                statusMessage.textContent = "";
+            }, 3000);
         }
         
         // Set up countdown timer
@@ -338,8 +319,7 @@
                 .map(v => v < 10 ? "0" + v : v)
                 .join(":");
                 
-            document.getElementById('countdown-display').textContent = timeString;
-            document.getElementById('header-timer').textContent = timeString;
+            document.getElementById('countdown').textContent = timeString;
             
             if (totalSeconds > 0) {
                 totalSeconds--;
@@ -350,168 +330,159 @@
         setInterval(updateTimer, 1000);
         updateTimer(); // Initial call
         
-        // Handle unlock button click
-        document.getElementById('unlock-button').addEventListener('click', function() {
-            checkPasscode();
-        });
-        
-        // Handle passcode field Enter key
-        document.getElementById('passcode-field').addEventListener('keyup', function(e) {
-            if (e.key === 'Enter') {
-                checkPasscode();
-            }
-        });
-        
-        // Check entered passcode
-        function checkPasscode() {
-            const passcode = document.getElementById('passcode-field').value;
+        // Handle the emergency code check
+        function checkEmergencyCode() {
+            const input = document.getElementById('emergency-input');
+            const code = input.value.trim();
+            const statusMessage = document.getElementById('status-message');
             
-            if (passcode === '12345') {
-                unlockSimulation();
+            if (code === '12345') {
+                // Correct code - unlock
+                statusMessage.textContent = "Verification successful. Unlocking system...";
+                statusMessage.style.color = "#88ff88";
+                
+                // Wait a moment for dramatic effect
+                setTimeout(() => {
+                    unlockSimulation();
+                }, 1500);
             } else {
-                // Shake the input to indicate wrong passcode
-                const input = document.getElementById('passcode-field');
-                input.classList.add('shake');
+                // Wrong code - show error
+                statusMessage.textContent = "Invalid code. Access denied.";
+                statusMessage.style.color = "#ff6666";
                 
                 // Clear the input
                 input.value = '';
                 
-                // Reset the animation after it completes
+                // Shake the input
+                input.classList.add('shake');
                 setTimeout(() => {
                     input.classList.remove('shake');
                 }, 500);
+                
+                // Clear error message after a delay
+                setTimeout(() => {
+                    statusMessage.textContent = "";
+                }, 3000);
             }
         }
-
-function unlockSimulation() {
+        
+        // Add event listener for the Enter key on the emergency input
+        document.getElementById('emergency-input').addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                checkEmergencyCode();
+            }
+        });
+        function unlockSimulation() {
+    // First exit fullscreen if we're in it
+    if (document.fullscreenElement) {
+        document.exitFullscreen().catch(err => {
+            console.log(`Error exiting fullscreen: ${err.message}`);
+        });
+    }
+    
+    // Then change the content
     document.body.innerHTML = `
         <div style="padding: 30px; text-align: center; background-color: #fff; color: #333; height: 100%; overflow: auto;">
-            <h1 style="color: #2a64b5; margin-bottom: 30px;">SIMULATION COMPLETE</h1>
+            <h1 style="color: #009900; margin-bottom: 30px;">SIMULATION COMPLETE</h1>
             
             <div style="max-width: 700px; margin: 0 auto; text-align: left;">
-                <h2 style="margin-bottom: 15px; color: #333;">About This Simulation</h2>
+                <h2 style="margin-bottom: 15px; color: #333;">Educational Simulation Notice</h2>
                 <p style="line-height: 1.6; margin-bottom: 25px;">
-                    This was an educational simulation demonstrating how locked-down environments like exam platforms 
-                    work and how they can appear similar to ransomware interfaces. Understanding these interfaces helps
-                    users recognize legitimate applications versus malicious ones.
+                    This was an educational simulation demonstrating aggressive screen-locking techniques.
+                    No data was actually at risk, and your device is completely safe.
                 </p>
                 
-                <h2 style="margin-bottom: 15px; color: #333;">Key Features Demonstrated:</h2>
+                <h2 style="margin-bottom: 15px; color: #333;">Features Demonstrated:</h2>
                 <ul style="line-height: 1.6; margin-bottom: 25px; padding-left: 25px;">
-                    <li>Full-screen lockdown similar to exam.net</li>
-                    <li>Prevention of browser navigation</li>
-                    <li>Keyboard shortcut blocking</li>
-                    <li>Timer countdowns to create urgency</li>
-                    <li>Passcode protection systems</li>
-                    <li>Warning messages for escape attempts</li>
+                    <li>Persistent fullscreen modes</li>
+                    <li>Prevention of keyboard shortcuts</li>
+                    <li>Browser navigation blocking</li>
+                    <li>Prevention of context menus</li>
+                    <li>Countdowns to create urgency</li>
+                    <li>Warning responses to escape attempts</li>
                 </ul>
                 
-                <h2 style="margin-bottom: 15px; color: #333;">Legitimate vs. Malicious Lockdowns:</h2>
-                <table style="width:100%; border-collapse: collapse; margin-bottom: 25px;">
-                    <tr style="background-color: #f2f2f2;">
-                        <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Legitimate (like exam.net)</th>
-                        <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Malicious (ransomware)</th>
-                    </tr>
-                    <tr>
-                        <td style="padding: 10px; border: 1px solid #ddd;">Educational or testing purpose</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">Criminal extortion purpose</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 10px; border: 1px solid #ddd;">Installed by administrators</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">Installed through deception</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 10px; border: 1px solid #ddd;">Can be exited with proper credentials</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">Demands payment to unlock</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 10px; border: 1px solid #ddd;">No data encryption</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">Encrypts personal files</td>
-                    </tr>
-                </table>
+                <h2 style="margin-bottom: 15px; color: #333;">Real-World Implications:</h2>
+                <p style="line-height: 1.6; margin-bottom: 25px;">
+                    Similar techniques are used by both legitimate applications (like secure exam software) and
+                    malicious software (like ransomware). Understanding these interfaces helps you recognize
+                    and respond appropriately to different scenarios.
+                </p>
                 
-                <h2 style="margin-bottom: 15px; color: #333;">Safety Tips:</h2>
-                <ol style="line-height: 1.6; margin-bottom: 30px; padding-left: 25px;">
-                    <li>Only use exam lockdown software from trusted sources</li>
-                    <li>Be aware of what legitimate lockdown screens look like</li>
-                    <li>If unsure about a lockdown screen, restart your device</li>
-                    <li>Keep your device updated with security patches</li>
-                    <li>Use security software to detect malicious lockdowns</li>
+                <h2 style="margin-bottom: 15px; color: #333;">How to Identify Malicious Lock Screens:</h2>
+                <ol style="line-height: 1.6; margin-bottom: 25px; padding-left: 25px;">
+                    <li>They often appear without warning or after clicking suspicious links</li>
+                    <li>They use threatening language about data loss or legal consequences</li>
+                    <li>They typically demand payment (often in cryptocurrency)</li>
+                    <li>They may display fake law enforcement logos</li>
+                    <li>They try to prevent you from accessing task manager or restarting</li>
                 </ol>
                 
-                <div style="text-align: center; margin-top: 30px; padding: 15px; background-color: #f0f7ff; border-radius: 8px;">
-                    <p style="margin-bottom: 10px;">Thank you for participating in this educational simulation!</p>
-                    <button onclick="resetSimulation()" style="padding: 10px 20px; background-color: #2a64b5; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                        Restart Simulation
-                    </button>
+                <h2 style="margin-bottom: 15px; color: #333;">What to Do If You Encounter a Real Lock Screen:</h2>
+                <ol style="line-height: 1.6; margin-bottom: 25px; padding-left: 25px;">
+                    <li>Don't panic - many lock screens can be bypassed</li>
+                    <li>Try forcing a device restart (hold power button)</li>
+                    <li>On iPads, try the home button + power button combination</li>
+                    <li>Use another device to research the specific lock screen</li>
+                    <li>Consult IT professionals if necessary</li>
+                    <li>Never pay ransoms - there's no guarantee of unlocking</li>
+                </ol>
+                
+                <div style="text-align: center; margin-top: 30px; padding: 20px; background-color: #f0f0f0; border-radius: 8px;">
+                    <p style="margin-bottom: 15px;">Thank you for participating in this educational simulation.</p>
+                    <p style="font-size: 14px; color: #666;">Remember: Always keep your device updated and be cautious about suspicious links.</p>
                 </div>
             </div>
         </div>
     `;
     
-    // Reset body styles and allow normal navigation
+    // Reset body styles to allow normal browser functioning
     document.body.style.overflow = "auto";
     document.body.style.position = "static";
+    document.body.style.backgroundColor = "#fff";
     
     // Reset event listeners that prevented navigation
     window.onpopstate = null;
     
-    // Exit fullscreen if currently in fullscreen mode
-    if (document.fullscreenElement) {
-        document.exitFullscreen().catch(err => {
-            console.log(`Error attempting to exit full-screen mode: ${err.message}`);
-        });
+    // Remove other event listeners
+    const eventTypes = ['keydown', 'contextmenu', 'fullscreenchange', 'visibilitychange', 'blur'];
+    for (const type of eventTypes) {
+        const clone = document.cloneNode(true);
+        document.replaceWith(clone);
     }
 }
 
-// Function to restart the simulation
-function resetSimulation() {
-    window.location.reload();
-}
-
-// Initial focus on the passcode field
-document.getElementById('passcode-field').focus();
-
-// Additional check to prevent iframe embedding
+// Check if the page is loaded in an iframe
 if (window.self !== window.top) {
-    // If the page is in an iframe, redirect to break out
+    // If in an iframe, try to break out
     window.top.location.href = window.self.location.href;
 }
 
-// iOS specific behaviors
-if (navigator.standalone) {
-    // Already running as a PWA on iOS
-    document.body.classList.add('ios-standalone-mode');
-} else if (/(iPhone|iPad|iPod)/i.test(navigator.userAgent)) {
-    // On iOS but not in standalone mode, consider showing add to home screen prompt
-    const homeScreenPrompt = document.createElement('div');
-    homeScreenPrompt.style.cssText = `
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: rgba(0,0,0,0.85);
-        color: white;
-        padding: 15px;
-        text-align: center;
-        font-size: 14px;
-        z-index: 10000;
-    `;
-    homeScreenPrompt.innerHTML = `
-        For the best experience, add this app to your home screen.
-        <button id="dismiss-prompt" style="margin-left: 10px; padding: 5px 10px; background: #444; border: none; color: white; border-radius: 4px;">
-            Dismiss
-        </button>
-    `;
-    
-    // Delay adding the prompt to give time for page load
-    setTimeout(() => {
-        document.body.appendChild(homeScreenPrompt);
-        document.getElementById('dismiss-prompt').addEventListener('click', function() {
-            homeScreenPrompt.remove();
-        });
-    }, 3000);
+// Attempt to lock orientation if possible
+if (screen.orientation && screen.orientation.lock) {
+    screen.orientation.lock('portrait').catch(error => {
+        console.log('Orientation lock failed:', error);
+    });
 }
+
+// Force focus on the emergency input when possible
+document.getElementById('emergency-input').focus();
+setInterval(() => {
+    document.getElementById('emergency-input').focus();
+}, 2000);
+
+// Generate random device ID - purely cosmetic
+function generateRandomID() {
+    const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let result = '';
+    for (let i = 0; i < 16; i++) {
+        if (i > 0 && i % 4 === 0) result += '-';
+        result += chars[Math.floor(Math.random() * chars.length)];
+    }
+    return result;
+}
+
+document.getElementById('device-id').textContent = 'ID: ' + generateRandomID();
 </script>
 </body>
 </html>
