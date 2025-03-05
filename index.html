@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Educational Ransomware Simulation</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+        
+        .ransomware-screen {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #c00;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .warning-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        
+        p {
+            font-size: 18px;
+            margin-bottom: 15px;
+            max-width: 600px;
+        }
+        
+        input {
+            padding: 12px;
+            width: 80%;
+            max-width: 300px;
+            font-size: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        button {
+            padding: 12px 24px;
+            font-size: 18px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+        
+        .simulation-notice {
+            position: absolute;
+            bottom: 10px;
+            font-size: 12px;
+            opacity: 0.7;
+            width: 100%;
+        }
+        
+        .timer {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="ransomware-screen">
+        <div class="warning-icon">⚠️</div>
+        <h1>YOUR DEVICE HAS BEEN LOCKED</h1>
+        <p>All your files have been encrypted. To unlock your device, enter the correct code below.</p>
+        <p>You have <span id="countdown">24:00:00</span> to pay before your files are permanently deleted.</p>
+        
+        <input type="number" id="decryptCode" placeholder="Enter unlock code" pattern="[0-9]*" inputmode="numeric">
+        <button onclick="checkCode()">Unlock Device</button>
+        
+        <div class="simulation-notice">
+            THIS IS ONLY A SIMULATION FOR EDUCATIONAL PURPOSES.<br>
+            No files have been encrypted. Restart your iPad to exit this simulation.
+        </div>
+    </div>
+
+    <script>
+        // Prevent normal navigation
+        document.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+        }, { passive: false });
+        
+        // Prevent zooming
+        document.addEventListener('gesturestart', function(e) {
+            e.preventDefault();
+        });
+        
+        // Fake countdown timer
+        let hours = 23;
+        let minutes = 59;
+        let seconds = 59;
+        
+        function updateTimer() {
+            document.getElementById('countdown').innerText = 
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (seconds > 0) {
+                seconds--;
+            } else {
+                if (minutes > 0) {
+                    minutes--;
+                    seconds = 59;
+                } else {
+                    if (hours > 0) {
+                        hours--;
+                        minutes = 59;
+                        seconds = 59;
+                    }
+                }
+            }
+        }
+        
+        setInterval(updateTimer, 1000);
+        
+        // Check unlock code
+        function checkCode() {
+            const code = document.getElementById('decryptCode').value;
+            if (code === "12345") {
+                alert("SIMULATION COMPLETE: Device unlocked successfully!");
+                document.body.innerHTML = `
+                    <div style="padding: 20px; text-align: center;">
+                        <h1>Simulation Complete</h1>
+                        <p>This was an educational simulation of ransomware. In a real attack, your files would have been encrypted and potentially unrecoverable without a decryption key.</p>
+                        <p>Remember to always:</p>
+                        <ul style="text-align: left; display: inline-block;">
+                            <li>Keep your devices updated</li>
+                            <li>Don't click suspicious links</li>
+                            <li>Backup your important files</li>
+                            <li>Use security software</li>
+                        </ul>
+                    </div>
+                `;
+                document.body.style.backgroundColor = "white";
+                document.body.style.color = "black";
+                document.body.style.overflow = "auto";
+                document.body.style.position = "static";
+            } else {
+                alert("Incorrect code! Try again.");
+            }
+        }
+        
+        // Force fullscreen if possible
+        document.addEventListener('click', function() {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            }
+        }, { once: true });
+    </script>
+</body>
+</html>
