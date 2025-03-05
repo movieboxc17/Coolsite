@@ -1,22 +1,35 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Educational Ransomware Simulation</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Security Training Simulation</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon.png">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body, html {
             margin: 0;
             padding: 0;
             height: 100%;
             width: 100%;
             overflow: hidden;
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
             background-color: #000;
             color: #fff;
             position: fixed;
             top: 0;
             left: 0;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
         
         .ransomware-screen {
@@ -26,44 +39,94 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background-color: #c00;
+            background: linear-gradient(135deg, #990000, #cc0000);
             text-align: center;
             padding: 20px;
             box-sizing: border-box;
+            position: relative;
+            z-index: 999;
         }
         
-        .warning-icon {
-            font-size: 80px;
-            margin-bottom: 20px;
-        }
-        
-        h1 {
-            font-size: 28px;
-            margin-bottom: 20px;
-        }
-        
-        p {
-            font-size: 18px;
-            margin-bottom: 15px;
+        .ransomware-content {
+            width: 100%;
             max-width: 600px;
         }
         
-        input {
-            padding: 12px;
+        .skull-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        h1 {
+            font-size: clamp(24px, 5vw, 32px);
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        p {
+            font-size: clamp(16px, 3vw, 18px);
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        
+        .timer-container {
+            background-color: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 10px;
+            margin: 20px 0;
+            display: inline-block;
             width: 80%;
             max-width: 300px;
-            font-size: 20px;
-            margin: 20px 0;
+        }
+        
+        .timer {
+            font-family: monospace;
+            font-size: 28px;
+            font-weight: bold;
+            color: #ff0;
+        }
+        
+        input {
+            padding: 15px;
+            width: 80%;
+            max-width: 300px;
+            font-size: 18px;
+            margin: 20px 0 10px;
             text-align: center;
+            border: 2px solid #fff;
+            background-color: rgba(0,0,0,0.2);
+            color: white;
+            border-radius: 8px;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #ff0;
         }
         
         button {
-            padding: 12px 24px;
+            padding: 15px 30px;
             font-size: 18px;
             background-color: #333;
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        button:active {
+            transform: scale(0.98);
+            background-color: #222;
         }
         
         .simulation-notice {
@@ -72,42 +135,118 @@
             font-size: 12px;
             opacity: 0.7;
             width: 100%;
+            padding: 10px;
+            background-color: rgba(0,0,0,0.3);
         }
         
-        .timer {
-            font-size: 24px;
-            margin: 20px 0;
+        .lock-instruction {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .bitcoin-address {
+            font-family: monospace;
+            background-color: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            margin: 15px 0;
+            word-break: break-all;
+        }
+        
+        @media (orientation: landscape) {
+            .ransomware-content {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                gap: 30px;
+            }
+            
+            .left-content {
+                flex: 1;
+                text-align: left;
+            }
+            
+            .right-content {
+                flex: 1;
+            }
         }
     </style>
 </head>
 <body>
     <div class="ransomware-screen">
-        <div class="warning-icon">⚠️</div>
-        <h1>YOUR DEVICE HAS BEEN LOCKED</h1>
-        <p>All your files have been encrypted. To unlock your device, enter the correct code below.</p>
-        <p>You have <span id="countdown">24:00:00</span> to pay before your files are permanently deleted.</p>
-        
-        <input type="number" id="decryptCode" placeholder="Enter unlock code" pattern="[0-9]*" inputmode="numeric">
-        <button onclick="checkCode()">Unlock Device</button>
+        <div class="ransomware-content">
+            <div class="left-content">
+                <div class="skull-icon">💀</div>
+                <h1>YOUR DEVICE HAS BEEN LOCKED</h1>
+                <p>All your personal files have been encrypted with a strong military-grade algorithm.</p>
+                <p>To recover your files, you must enter the correct decryption key.</p>
+                
+                <div class="timer-container">
+                    <p>Time remaining:</p>
+                    <div class="timer" id="countdown">23:59:59</div>
+                </div>
+                
+                <div class="bitcoin-address">
+                    Bitcoin: 1A2B3C4D5E6F7G8H9I0J1K2L3M4N5O6P7Q8R9S0T
+                </div>
+            </div>
+            
+            <div class="right-content">
+                <div class="lock-instruction">
+                    <p>Enter the unlock code to restore your device</p>
+                    <input type="number" id="decryptCode" placeholder="Enter unlock code" pattern="[0-9]*" inputmode="numeric">
+                    <button id="unlockButton">Decrypt Files</button>
+                </div>
+                
+                <p style="color: #ff6666; font-size: 14px;">Warning: Do not restart your device or your files will be permanently deleted.</p>
+            </div>
+        </div>
         
         <div class="simulation-notice">
             THIS IS ONLY A SIMULATION FOR EDUCATIONAL PURPOSES.<br>
-            No files have been encrypted. Restart your iPad to exit this simulation.
+            No files are actually locked. The unlock code is "12345". Restart your iPad to exit.
         </div>
     </div>
 
     <script>
-        // Prevent normal navigation
+        // Block history navigation
+        history.pushState(null, null, location.href);
+        window.onpopstate = function() {
+            history.go(1);
+        };
+        
+        // Take over the screen when possible
+        document.addEventListener('click', function() {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(e => {
+                    console.log("Fullscreen request failed");
+                });
+            }
+        });
+        
+        // Prevent normal touch navigation
         document.addEventListener('touchmove', function(e) {
-            e.preventDefault();
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
         }, { passive: false });
         
-        // Prevent zooming
+        // Prevent pinch zooming
         document.addEventListener('gesturestart', function(e) {
             e.preventDefault();
         });
         
-        // Fake countdown timer
+        // Prevent context menu
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+        
+        // Set up countdown timer
         let hours = 23;
         let minutes = 59;
         let seconds = 59;
@@ -135,38 +274,105 @@
         setInterval(updateTimer, 1000);
         
         // Check unlock code
+        document.getElementById('unlockButton').addEventListener('click', function() {
+            checkCode();
+        });
+        
+        document.getElementById('decryptCode').addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                checkCode();
+            }
+        });
+        
         function checkCode() {
             const code = document.getElementById('decryptCode').value;
             if (code === "12345") {
-                alert("SIMULATION COMPLETE: Device unlocked successfully!");
-                document.body.innerHTML = `
-                    <div style="padding: 20px; text-align: center;">
-                        <h1>Simulation Complete</h1>
-                        <p>This was an educational simulation of ransomware. In a real attack, your files would have been encrypted and potentially unrecoverable without a decryption key.</p>
-                        <p>Remember to always:</p>
-                        <ul style="text-align: left; display: inline-block;">
-                            <li>Keep your devices updated</li>
-                            <li>Don't click suspicious links</li>
-                            <li>Backup your important files</li>
-                            <li>Use security software</li>
-                        </ul>
-                    </div>
-                `;
-                document.body.style.backgroundColor = "white";
-                document.body.style.color = "black";
-                document.body.style.overflow = "auto";
-                document.body.style.position = "static";
+                unlockSimulation();
             } else {
-                alert("Incorrect code! Try again.");
+                // Shake the input to indicate wrong code
+                const input = document.getElementById('decryptCode');
+                input.style.animation = 'none';
+                setTimeout(() => {
+                    input.style.animation = 'shake 0.5s';
+                }, 10);
+                
+                // Add shake animation if not present
+                if (!document.querySelector('style').textContent.includes('@keyframes shake')) {
+                    const style = document.createElement('style');
+                    style.textContent = `
+                        @keyframes shake {
+                            0%, 100% { transform: translateX(0); }
+                            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                            20%, 40%, 60%, 80% { transform: translateX(5px); }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
             }
         }
         
-        // Force fullscreen if possible
-        document.addEventListener('click', function() {
-            if (document.documentElement.requestFullscreen) {
-                document.documentElement.requestFullscreen();
+        function unlockSimulation() {
+            // Display unlock message
+            document.body.innerHTML = `
+                <div style="padding: 20px; text-align: center; height: 100%; overflow: auto; background: #fff; color: #333;">
+                    <h1 style="color: #008800; margin: 30px 0;">SIMULATION COMPLETE</h1>
+                    <div style="max-width: 600px; margin: 0 auto;">
+                        <p style="font-size: 18px; margin: 20px 0;">This was an educational simulation of ransomware. In a real attack, your files would have been encrypted and potentially unrecoverable without a decryption key.</p>
+                        
+                        <h2 style="margin: 30px 0 15px;">How real ransomware works:</h2>
+                        <ul style="text-align: left; display: inline-block; margin: 0 auto;">
+                            <li style="margin-bottom: 10px;">Encrypts personal files using advanced encryption</li>
+                            <li style="margin-bottom: 10px;">Demands payment (often in cryptocurrency)</li>
+                            <li style="margin-bottom: 10px;">Uses fear tactics to pressure victims</li>
+                            <li style="margin-bottom: 10px;">May have countdown timers to create urgency</li>
+                        </ul>
+                        
+                        <h2 style="margin: 30px 0 15px;">Protect yourself by:</h2>
+                        <ul style="text-align: left; display: inline-block; margin: 0 auto;">
+                            <li style="margin-bottom: 10px;">Keeping your device updated</li>
+                            <li style="margin-bottom: 10px;">Using strong passwords and 2FA</li>
+                            <li style="margin-bottom: 10px;">Not clicking suspicious links or attachments</li>
+                            <li style="margin-bottom: 10px;">Backing up important files regularly</li>
+                            <li style="margin-bottom: 10px;">Using security software</li>
+                        </ul>
+                        
+                        <p style="margin: 30px 0;">Thanks for participating in this educational simulation!</p>
+                    </div>
+                </div>
+            `;
+            
+            // Reset body styles
+            document.body.style.overflow = "auto";
+            document.body.style.position = "static";
+            
+            // Allow history navigation again
+            window.onpopstate = null;
+        }
+        
+        // Lock orientation if possible
+        if (screen.orientation && screen.orientation.lock) {
+            screen.orientation.lock('portrait').catch(error => {
+                console.log('Orientation lock failed:', error);
+            });
+        }
+        
+        // Handle iOS specific behaviors
+        if (navigator.standalone) {
+            // Already running as a PWA
+            document.body.classList.add('pwa-mode');
+        } else {
+            // Show a message to add to home screen
+            const addToHomeNotice = document.createElement('div');
+            addToHomeNotice.innerHTML = `
+                <div style="position: fixed; top: 0; left: 0; right: 0; background: rgba(0,0,0,0.8); color: white; padding: 10px; text-align: center; font-size: 14px; z-index: 1000;">
+                    For full experience, add to home screen
+                    <button onclick="this.parentNode.remove()" style="margin-left: 10px; padding: 5px; background: #666; border: none; color: white; border-radius: 4px;">OK</button>
+                </div>
+            `;
+            if (/(iPhone|iPad|iPod)/i.test(navigator.userAgent) && !navigator.standalone) {
+                document.body.appendChild(addToHomeNotice);
             }
-        }, { once: true });
+        }
     </script>
 </body>
 </html>
