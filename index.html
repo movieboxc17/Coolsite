@@ -1,20 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <title>System Alert</title>
-    <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAMAAABrrFhUAAAAA1BMVEUAAP+KeNJXAAAAR0lEQVR4nO3BAQ0AAADCoPdPbQ43oAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAICvA9ygAAFXaD83AAAAAElFTkSuQmCC">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            user-select: none;
         }
         
         body, html {
@@ -22,467 +18,161 @@
             height: 100%;
             overflow: hidden;
             position: fixed;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #000;
-            touch-action: none; /* Prevents default touch behaviors */
+            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background-color: #cc0000;
             color: white;
+            -webkit-user-select: none;
+            user-select: none;
+            touch-action: none;
         }
         
-        #lockscreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #cc0000, #7a0000);
+        .lock-screen {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 9999;
+            width: 100%;
+            height: 100%;
             text-align: center;
             padding: 20px;
         }
         
         .lock-icon {
             font-size: 80px;
-            margin-bottom: 30px;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(1); opacity: 0.8; }
+            margin-bottom: 20px;
         }
         
         h1 {
-            font-size: 28px;
+            font-size: 24px;
             margin-bottom: 20px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
         
-        p {
-            font-size: 18px;
-            margin-bottom: 15px;
-            max-width: 600px;
-            line-height: 1.5;
-        }
-        
-        .system-message {
+        .message {
             background-color: rgba(0,0,0,0.3);
             padding: 15px;
             border-radius: 8px;
-            margin: 20px 0;
-            font-size: 16px;
-            max-width: 600px;
+            max-width: 400px;
+            margin-bottom: 30px;
         }
         
-        .timer-container {
-            background-color: rgba(0,0,0,0.4);
-            border-radius: 8px;
-            padding: 10px 20px;
-            margin: 20px 0;
-            display: inline-block;
-        }
-        
-        .timer {
-            font-family: monospace;
-            font-size: 28px;
+        .countdown {
+            font-size: 30px;
             font-weight: bold;
-            color: #fff;
-        }
-        
-        #device-id {
+            margin: 20px 0;
             font-family: monospace;
-            background-color: rgba(0,0,0,0.2);
-            padding: 8px 15px;
-            border-radius: 4px;
-            font-size: 16px;
-            letter-spacing: 1px;
-            margin: 10px 0;
         }
         
-        .emergency-section {
-            margin-top: 30px;
-            width: 100%;
-            max-width: 500px;
-        }
-        
-        .emergency-text {
-            font-size: 14px;
-            opacity: 0.7;
-            margin-bottom: 10px;
-        }
-        
-        #emergency-input {
-            width: 250px;
+        input {
+            width: 200px;
             padding: 10px;
-            background-color: rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.2);
-            color: rgba(255,255,255,0.7);
-            border-radius: 4px;
+            margin: 10px 0;
+            border: none;
+            background-color: rgba(0,0,0,0.2);
+            color: white;
             text-align: center;
-            margin-top: 5px;
-            font-family: monospace;
+            border-radius: 4px;
         }
         
-        #emergency-input:focus {
+        input:focus {
             outline: none;
-            border-color: rgba(255,255,255,0.4);
+            background-color: rgba(0,0,0,0.3);
         }
         
-        .status-text {
-            margin-top: 10px;
-            font-size: 14px;
-            min-height: 20px;
-        }
-        
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-6px); }
-            20%, 40%, 60%, 80% { transform: translateX(6px); }
-        }
-        
-        .shake {
-            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
-        }
-        
-        /* Hide all scrollbars */
-        ::-webkit-scrollbar {
-            display: none;
+        .footer {
+            position: absolute;
+            bottom: 10px;
+            font-size: 10px;
+            opacity: 0.7;
         }
     </style>
 </head>
 <body>
-    <div id="lockscreen">
+    <div class="lock-screen">
         <div class="lock-icon">🔒</div>
-        <h1>SYSTEM LOCKED</h1>
+        <h1>DEVICE LOCKED</h1>
         
-        <div class="system-message">
-            <p>This device has been locked for security violations.</p>
+        <div class="message">
+            <p>This device has been locked for security reasons.</p>
         </div>
         
-        <p>Your identity and location have been recorded.</p>
-        <div id="device-id">ID: 8A7C-4F19-E23D-9B5X</div>
+        <p>Time remaining before data wipe:</p>
+        <div class="countdown" id="timer">23:59:59</div>
         
-        <div class="timer-container">
-            <p>Auto-wipe in:</p>
-            <div class="timer" id="countdown">23:59:59</div>
-        </div>
+        <input type="number" id="passcode" placeholder="Enter unlock code" pattern="[0-9]*" inputmode="numeric">
         
-        <div class="system-message">
-            <p>All functions are disabled and your data is being monitored.</p>
-            <p>Do not attempt to exit this screen or your data will be compromised.</p>
-        </div>
-        
-        <div class="emergency-section">
-            <div class="emergency-text">System administrator verification required:</div>
-            <input type="password" id="emergency-input" placeholder="Enter verification key" autocomplete="off">
-            <div class="status-text" id="status-message"></div>
+        <div class="footer">
+            Simulation for educational purposes. Unlock code: 12345
         </div>
     </div>
 
     <script>
-        // Force fullscreen immediately and persistently
-        function goFullScreen() {
+        // Try to enter fullscreen mode whenever possible
+        document.addEventListener('click', requestFullscreen);
+        document.addEventListener('touchstart', requestFullscreen);
+        
+        function requestFullscreen() {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().catch(err => {
-                    console.log(`Error attempting to enable full-screen mode: ${err.message}`);
-                    setTimeout(goFullScreen, 1000); // Try again if it fails
+                    console.log('Fullscreen request failed: ', err);
                 });
             }
         }
         
-        // Try to go fullscreen on any user interaction
-        document.addEventListener('click', goFullScreen);
-        document.addEventListener('touchstart', goFullScreen);
-        document.addEventListener('keydown', goFullScreen);
+        // Basic timer function
+        let hours = 23;
+        let minutes = 59;
+        let seconds = 59;
         
-        // Attempt fullscreen immediately
-        goFullScreen();
+        function updateTimer() {
+            document.getElementById('timer').textContent = 
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (seconds > 0) {
+                seconds--;
+            } else {
+                if (minutes > 0) {
+                    minutes--;
+                    seconds = 59;
+                } else if (hours > 0) {
+                    hours--;
+                    minutes = 59;
+                    seconds = 59;
+                }
+            }
+        }
         
-        // Keep trying to go fullscreen periodically
-        setInterval(goFullScreen, 3000);
+        setInterval(updateTimer, 1000);
         
-        // Block browser navigation with history API
-        history.pushState(null, null, document.URL);
-        window.addEventListener('popstate', function () {
-            history.pushState(null, null, document.URL);
-            showNavigationWarning();
+        // Check passcode
+        document.getElementById('passcode').addEventListener('input', function() {
+            if (this.value === '12345') {
+                // Exit fullscreen if possible
+                if (document.fullscreenElement) {
+                    document.exitFullscreen();
+                }
+                
+                // Show completion message
+                document.body.innerHTML = `
+                    <div style="padding: 20px; text-align: center; background-color: white; color: black; height: 100%;">
+                        <h1 style="margin-top: 50px; color: green;">SIMULATION COMPLETE</h1>
+                        <p style="margin-top: 20px;">This was an educational demonstration.</p>
+                        <p style="margin-top: 10px;">In a real scenario, restart your device to exit unwanted screens.</p>
+                    </div>
+                `;
+                document.body.style.backgroundColor = "white";
+            }
         });
         
-        // Block common keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            // Block standard navigation keys
-            const blockedKeys = [
-                27, // Esc
-                112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, // F1-F12
-                91, 92, // Windows/Command keys
-                18, // Alt
-                17, // Control
-                9, // Tab
-                82, // R key (for refresh)
-                87  // W key (for close)
-            ];
-            
-            // Block Ctrl+key and Command+key combinations
-            if ((e.ctrlKey || e.metaKey) && 
-                ['w', 'a', 't', 'n', 'r', '+', '-', '0', 'f', 'p', 's'].includes(e.key.toLowerCase())) {
-                e.preventDefault();
-                showNavigationWarning();
-                return false;
-            }
-            
-            // Block Alt+Tab and other Alt combinations
-            if (e.altKey) {
-                e.preventDefault();
-                showNavigationWarning();
-                return false;
-            }
-            
-            // Block function keys and other navigation keys
-            if (blockedKeys.includes(e.keyCode)) {
-                e.preventDefault();
-                showNavigationWarning();
-                return false;
-            }
-            
-            // Allow input in the emergency field
-            if (e.target.id === 'emergency-input') {
-                // If Enter is pressed, check the code
-                if (e.key === 'Enter') {
-                    checkEmergencyCode();
-                }
-                return;
-            }
-        }, true);
+        // Block navigation with history API
+        history.pushState(null, null, document.URL);
+        window.addEventListener('popstate', function() {
+            history.pushState(null, null, document.URL);
+        });
         
         // Prevent context menu
         document.addEventListener('contextmenu', function(e) {
             e.preventDefault();
-            showNavigationWarning();
-            return false;
         });
-        
-        // Handle fullscreen change
-        document.addEventListener('fullscreenchange', function() {
-            if (!document.fullscreenElement) {
-                showNavigationWarning();
-                // Try to go back to fullscreen
-                setTimeout(goFullScreen, 500);
-            }
-        });
-        
-        // Monitor visibility changes
-        document.addEventListener('visibilitychange', function() {
-            if (document.visibilityState !== 'visible') {
-                showNavigationWarning();
-            }
-        });
-        
-        // Handle blur events
-        window.addEventListener('blur', function() {
-            showNavigationWarning();
-        });
-        
-        // Display warning for navigation attempts
-        function showNavigationWarning() {
-            const statusMessage = document.getElementById('status-message');
-            statusMessage.textContent = "WARNING: Exit attempt detected and logged.";
-            statusMessage.style.color = "#ff6666";
-            
-            // Make the screen shake
-            const lockscreen = document.getElementById('lockscreen');
-            lockscreen.classList.add('shake');
-            
-            // Reset the animation after it completes
-            setTimeout(() => {
-                lockscreen.classList.remove('shake');
-            }, 500);
-            
-            // Clear the message after a delay
-            setTimeout(() => {
-                statusMessage.textContent = "";
-            }, 3000);
-        }
-        
-        // Set up countdown timer
-        let totalSeconds = 86399; // 23:59:59
-        
-        function updateTimer() {
-            const hours = Math.floor(totalSeconds / 3600);
-            const minutes = Math.floor((totalSeconds % 3600) / 60);
-            const seconds = totalSeconds % 60;
-            
-            const timeString = [hours, minutes, seconds]
-                .map(v => v < 10 ? "0" + v : v)
-                .join(":");
-                
-            document.getElementById('countdown').textContent = timeString;
-            
-            if (totalSeconds > 0) {
-                totalSeconds--;
-            }
-        }
-        
-        // Update timer every second
-        setInterval(updateTimer, 1000);
-        updateTimer(); // Initial call
-        
-        // Handle the emergency code check
-        function checkEmergencyCode() {
-            const input = document.getElementById('emergency-input');
-            const code = input.value.trim();
-            const statusMessage = document.getElementById('status-message');
-            
-            if (code === '12345') {
-                // Correct code - unlock
-                statusMessage.textContent = "Verification successful. Unlocking system...";
-                statusMessage.style.color = "#88ff88";
-                
-                // Wait a moment for dramatic effect
-                setTimeout(() => {
-                    unlockSimulation();
-                }, 1500);
-            } else {
-                // Wrong code - show error
-                statusMessage.textContent = "Invalid code. Access denied.";
-                statusMessage.style.color = "#ff6666";
-                
-                // Clear the input
-                input.value = '';
-                
-                // Shake the input
-                input.classList.add('shake');
-                setTimeout(() => {
-                    input.classList.remove('shake');
-                }, 500);
-                
-                // Clear error message after a delay
-                setTimeout(() => {
-                    statusMessage.textContent = "";
-                }, 3000);
-            }
-        }
-        
-        // Add event listener for the Enter key on the emergency input
-        document.getElementById('emergency-input').addEventListener('keyup', function(e) {
-            if (e.key === 'Enter') {
-                checkEmergencyCode();
-            }
-        });
-        function unlockSimulation() {
-    // First exit fullscreen if we're in it
-    if (document.fullscreenElement) {
-        document.exitFullscreen().catch(err => {
-            console.log(`Error exiting fullscreen: ${err.message}`);
-        });
-    }
-    
-    // Then change the content
-    document.body.innerHTML = `
-        <div style="padding: 30px; text-align: center; background-color: #fff; color: #333; height: 100%; overflow: auto;">
-            <h1 style="color: #009900; margin-bottom: 30px;">SIMULATION COMPLETE</h1>
-            
-            <div style="max-width: 700px; margin: 0 auto; text-align: left;">
-                <h2 style="margin-bottom: 15px; color: #333;">Educational Simulation Notice</h2>
-                <p style="line-height: 1.6; margin-bottom: 25px;">
-                    This was an educational simulation demonstrating aggressive screen-locking techniques.
-                    No data was actually at risk, and your device is completely safe.
-                </p>
-                
-                <h2 style="margin-bottom: 15px; color: #333;">Features Demonstrated:</h2>
-                <ul style="line-height: 1.6; margin-bottom: 25px; padding-left: 25px;">
-                    <li>Persistent fullscreen modes</li>
-                    <li>Prevention of keyboard shortcuts</li>
-                    <li>Browser navigation blocking</li>
-                    <li>Prevention of context menus</li>
-                    <li>Countdowns to create urgency</li>
-                    <li>Warning responses to escape attempts</li>
-                </ul>
-                
-                <h2 style="margin-bottom: 15px; color: #333;">Real-World Implications:</h2>
-                <p style="line-height: 1.6; margin-bottom: 25px;">
-                    Similar techniques are used by both legitimate applications (like secure exam software) and
-                    malicious software (like ransomware). Understanding these interfaces helps you recognize
-                    and respond appropriately to different scenarios.
-                </p>
-                
-                <h2 style="margin-bottom: 15px; color: #333;">How to Identify Malicious Lock Screens:</h2>
-                <ol style="line-height: 1.6; margin-bottom: 25px; padding-left: 25px;">
-                    <li>They often appear without warning or after clicking suspicious links</li>
-                    <li>They use threatening language about data loss or legal consequences</li>
-                    <li>They typically demand payment (often in cryptocurrency)</li>
-                    <li>They may display fake law enforcement logos</li>
-                    <li>They try to prevent you from accessing task manager or restarting</li>
-                </ol>
-                
-                <h2 style="margin-bottom: 15px; color: #333;">What to Do If You Encounter a Real Lock Screen:</h2>
-                <ol style="line-height: 1.6; margin-bottom: 25px; padding-left: 25px;">
-                    <li>Don't panic - many lock screens can be bypassed</li>
-                    <li>Try forcing a device restart (hold power button)</li>
-                    <li>On iPads, try the home button + power button combination</li>
-                    <li>Use another device to research the specific lock screen</li>
-                    <li>Consult IT professionals if necessary</li>
-                    <li>Never pay ransoms - there's no guarantee of unlocking</li>
-                </ol>
-                
-                <div style="text-align: center; margin-top: 30px; padding: 20px; background-color: #f0f0f0; border-radius: 8px;">
-                    <p style="margin-bottom: 15px;">Thank you for participating in this educational simulation.</p>
-                    <p style="font-size: 14px; color: #666;">Remember: Always keep your device updated and be cautious about suspicious links.</p>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    // Reset body styles to allow normal browser functioning
-    document.body.style.overflow = "auto";
-    document.body.style.position = "static";
-    document.body.style.backgroundColor = "#fff";
-    
-    // Reset event listeners that prevented navigation
-    window.onpopstate = null;
-    
-    // Remove other event listeners
-    const eventTypes = ['keydown', 'contextmenu', 'fullscreenchange', 'visibilitychange', 'blur'];
-    for (const type of eventTypes) {
-        const clone = document.cloneNode(true);
-        document.replaceWith(clone);
-    }
-}
-
-// Check if the page is loaded in an iframe
-if (window.self !== window.top) {
-    // If in an iframe, try to break out
-    window.top.location.href = window.self.location.href;
-}
-
-// Attempt to lock orientation if possible
-if (screen.orientation && screen.orientation.lock) {
-    screen.orientation.lock('portrait').catch(error => {
-        console.log('Orientation lock failed:', error);
-    });
-}
-
-// Force focus on the emergency input when possible
-document.getElementById('emergency-input').focus();
-setInterval(() => {
-    document.getElementById('emergency-input').focus();
-}, 2000);
-
-// Generate random device ID - purely cosmetic
-function generateRandomID() {
-    const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    let result = '';
-    for (let i = 0; i < 16; i++) {
-        if (i > 0 && i % 4 === 0) result += '-';
-        result += chars[Math.floor(Math.random() * chars.length)];
-    }
-    return result;
-}
-
-document.getElementById('device-id').textContent = 'ID: ' + generateRandomID();
-</script>
+    </script>
 </body>
 </html>
